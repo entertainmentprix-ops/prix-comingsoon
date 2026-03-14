@@ -248,10 +248,15 @@ opacity:.25;
 
 <img src="prix-logo.png" class="logo" id="logo">
 <div class="soon" id="soon">COMING SOON</div>
-
+ <audio id="connectSound" src="connect.mp3"></audio>
 </div>
 
+ 
+
+
 <script>
+  const sound = document.getElementById("connectSound")
+
 
 const brand=document.getElementById("brand")
 const creator=document.getElementById("creator")
@@ -302,6 +307,10 @@ function connect(from){
 
 if(triggered) return
 triggered=true
+
+  sound.currentTime = 0
+sound.play()
+
 
 let activeLine = from==="brand" ? lineBR : lineCR
 let targetCircle = from==="brand" ? creator : brand
