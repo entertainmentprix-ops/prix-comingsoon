@@ -24,7 +24,7 @@ overflow:hidden;
 color:white;
 }
 
-/* background glow */
+/* glow */
 
 .glow{
 position:absolute;
@@ -109,7 +109,7 @@ margin-top:6px;
 opacity:.6;
 }
 
-/* svg connection */
+/* svg */
 
 svg{
 position:absolute;
@@ -130,8 +130,6 @@ stroke-dashoffset:500;
 transition:3s ease;
 opacity:0;
 }
-
-/* pulse */
 
 .pulse{
 fill:#2fd3ff;
@@ -165,53 +163,51 @@ transition:2s;
 color:rgba(255,255,255,.75);
 }
 
-<style>
-
-/* ---------------- MOBILE VERSION ---------------- */
-
-/* -------- MOBILE: LOGO ONLY -------- */
+/* ---------------- MOBILE ---------------- */
 
 @media (max-width:768px){
 
-/* hide desktop layout */
-
-.container{
+.circle,
+svg{
 display:none;
 }
 
-/* create simple centered layout */
-
-body{
-display:flex;
+.container{
+width:100%;
+height:100vh;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-height:100vh;
-text-align:center;
 }
 
-/* show logo */
-
 .logo{
-position:static;
-opacity:1;
+position:relative;
+top:auto;
+left:auto;
+transform:none;
 width:220px;
+opacity:1;
 margin-bottom:16px;
 }
 
-/* show coming soon */
-
 .soon{
-position:static;
+position:relative;
+top:auto;
+left:auto;
+transform:none;
 opacity:1;
-letter-spacing:6px;
+text-align:center;
 font-size:12px;
+letter-spacing:6px;
+}
+
+.glow{
+opacity:.25;
 }
 
 }
+
 </style>
-
-
 </head>
 
 <body>
