@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRIX</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+
+body{
+height:100vh;
+background:#040408;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+color:white;
+}
+
+/* background glow */
+
+.glow{
+position:absolute;
+width:800px;
+height:800px;
+background:linear-gradient(135deg,#7b2cff,#2fd3ff);
+filter:blur(240px);
+opacity:.12;
+animation:floatGlow 16s ease-in-out infinite;
+transition:2s;
+}
+
+body.connected .glow{
+opacity:.45;
+}
+
+@keyframes floatGlow{
+0%{transform:translate(-120px,-80px)}
+50%{transform:translate(120px,80px)}
+100%{transform:translate(-120px,-80px)}
+}
+
+/* layout */
+
+.container{
+position:relative;
+width:720px;
+height:300px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+z-index:2;
+}
+
+/* circles */
+
+.circle{
+position:relative;
+width:170px;
+height:170px;
+border-radius:50%;
+border:1.6px solid rgba(255,255,255,.25);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:.4s;
+}
+
+.circle:hover{
+box-shadow:0 0 30px rgba(123,44,255,.5);
+border-color:white;
+transform:scale(1.05);
+}
+
+.circle.active{
+box-shadow:0 0 35px rgba(47,211,255,.7);
+border-color:#2fd3ff;
+}
+
+.circle.hidden{
+opacity:0;
+transform:scale(.85);
+}
+
+/* text */
+
+.circleText{text-align:center;}
+
+.circleTitle{
+font-size:16px;
+letter-spacing:.5px;
+background:linear-gradient(90deg,#fff,#cfcfff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.circleSub{
+font-size:10px;
+letter-spacing:3px;
+margin-top:6px;
+opacity:.6;
+}
+
+/* svg connection */
+
+svg{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+pointer-events:none;
+}
+
+path{
+stroke:url(#grad);
+stroke-width:2;
+fill:none;
+stroke-linecap:round;
+stroke-dasharray:500;
+stroke-dashoffset:500;
+transition:3s ease;
+opacity:0;
+}
+
+/* pulse */
+
+.pulse{
+fill:#2fd3ff;
+filter:blur(4px);
+opacity:0;
+}
+
+/* bigger logo */
+
+.logo{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-60%);
+width:420px;
+opacity:0;
+transition:2s;
+}
+
+/* coming soon lower */
+
+.soon{
+position:absolute;
+top:75%;
+left:50%;
+transform:translateX(-50%);
+font-size:12px;
+letter-spacing:6px;
+opacity:0;
+transition:2s;
+color:rgba(255,255,255,.75);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="glow"></div>
+
+<div class="container">
+
+<div class="circle" id="brand">
+<div class="circleText">
+<div class="circleTitle">Brands</div>
+<div class="circleSub">ENTER</div>
+</div>
+</div>
+
+<div class="circle" id="creator">
+<div class="circleText">
+<div class="circleTitle">Creators</div>
+<div class="circleSub">ENTER</div>
+</div>
+</div>
+
+<svg viewBox="0 0 720 300">
+
+<defs>
+<linearGradient id="grad">
+<stop offset="0%" stop-color="#7b2cff"/>
+<stop offset="100%" stop-color="#2fd3ff"/>
+</linearGradient>
+</defs>
+
+<!-- adjusted edge touch (slightly outside to avoid visual crossing) -->
+
+<path id="lineBR" d="M178 150 C300 210 420 210 542 150"/>
+<path id="lineCR" d="M542 150 C420 210 300 210 178 150"/>
+
+<circle id="pulse" class="pulse" r="6"/>
+
+</svg>
+
+<img src="prix-logo.png" class="logo" id="logo">
+<div class="soon" id="soon">COMING SOON</div>
+
+</div>
+
+<script>
+
+const brand=document.getElementById("brand")
+const creator=document.getElementById("creator")
+const lineBR=document.getElementById("lineBR")
+const lineCR=document.getElementById("lineCR")
+const pulse=document.getElementById("pulse")
+const logo=document.getElementById("logo")
+const soon=document.getElementById("soon")
+
+let triggered=false
+
+function animatePulse(path,targetCircle){
+
+const length=path.getTotalLength()
+let start=null
+let glowTriggered=false
+
+pulse.style.opacity=1
+
+function step(timestamp){
+
+if(!start) start=timestamp
+
+let progress=(timestamp-start)/3000
+if(progress>1) progress=1
+
+let point=path.getPointAtLength(progress*length)
+
+pulse.setAttribute("cx",point.x)
+pulse.setAttribute("cy",point.y)
+
+if(progress>0.98 && !glowTriggered){
+targetCircle.classList.add("active")
+glowTriggered=true
+}
+
+if(progress<1){
+requestAnimationFrame(step)
+}
+
+}
+
+requestAnimationFrame(step)
+
+}
+
+function connect(from){
+
+if(triggered) return
+triggered=true
+
+let activeLine = from==="brand" ? lineBR : lineCR
+let targetCircle = from==="brand" ? creator : brand
+
+activeLine.style.opacity=1
+activeLine.style.strokeDashoffset="0"
+
+setTimeout(()=>{
+animatePulse(activeLine,targetCircle)
+},400)
+
+setTimeout(()=>{
+brand.classList.add("hidden")
+creator.classList.add("hidden")
+},3800)
+
+setTimeout(()=>{
+activeLine.style.opacity=0
+pulse.style.opacity=0
+},4200)
+
+setTimeout(()=>{
+document.body.classList.add("connected")
+},4400)
+
+setTimeout(()=>{
+logo.style.opacity=1
+soon.style.opacity=1
+},4800)
+
+}
+
+brand.onclick=()=>connect("brand")
+creator.onclick=()=>connect("creator")
+
+</script>
+
+</body>
+</html>
